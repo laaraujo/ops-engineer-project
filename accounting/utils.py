@@ -27,7 +27,7 @@ class PolicyAccounting(object):
             date_cursor = datetime.now().date()
 
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
-                                .filter(Invoice.bill_date < date_cursor)\
+                                .filter(Invoice.bill_date <= date_cursor)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
         due_now = 0
@@ -35,7 +35,7 @@ class PolicyAccounting(object):
             due_now += invoice.amount_due
 
         payments = Payment.query.filter_by(policy_id=self.policy.id)\
-                                .filter(Payment.transaction_date < date_cursor)\
+                                .filter(Payment.transaction_date <= date_cursor)\
                                 .all()
         for payment in payments:
             due_now -= payment.amount_paid
@@ -93,7 +93,7 @@ class PolicyAccounting(object):
         for invoice in self.policy.invoices:
             invoice.delete()
 
-        billing_schedules = {'Annual': None, 'Semi-Annual': 3, 'Quarterly': 4, 'Monthly': 12}
+        billing_schedules = {'Annual': 1, 'Semi-Annual': 3, 'Quarterly': 4, 'Monthly': 12}
 
         invoices = []
         first_invoice = Invoice(self.policy.id,
@@ -104,7 +104,16 @@ class PolicyAccounting(object):
         invoices.append(first_invoice)
 
         if self.policy.billing_schedule == "Annual":
-            pass
+            first_invoice.amount_due = first_invoice.amount_due / billing_schedules.get(self.policy.billing_schedule)
+            for i in range(1, billing_schedules.get(self.policy.billing_schedule)):
+                months_after_eff_date = i * 12
+                bill_date = self.policy.effective_date + relativedelta(months=months_after_eff_date)
+                invoice = Invoice(self.policy.id,
+                                  bill_date,
+                                  bill_date + relativedelta(months=1),
+                                  bill_date + relativedelta(months=1, days=14),
+                                  self.policy.annual_premium / billing_schedules.get(self.policy.billing_schedule))
+                invoices.append(invoice)
         elif self.policy.billing_schedule == "Two-Pay":
             first_invoice.amount_due = first_invoice.amount_due / billing_schedules.get(self.policy.billing_schedule)
             for i in range(1, billing_schedules.get(self.policy.billing_schedule)):
