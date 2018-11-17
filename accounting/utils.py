@@ -31,7 +31,7 @@ class PolicyAccounting(object):
             date_cursor = datetime.now().date()
 
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
-                                .filter(Invoice.bill_date <= date_cursor)\
+                                .filter(Invoice.bill_date <= date_cursor, Invoice.deleted == False)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
         due_now = 0
@@ -45,6 +45,44 @@ class PolicyAccounting(object):
             due_now -= payment.amount_paid
 
         return due_now
+
+    def change_billing_schedule(self, billing_schedule=None):
+        """
+        Changes billing schedle of the already existing policy.
+        :param billing_schedule: New billing schedule.
+        """
+
+        valid_billing_schedule, error = self.validate_billing_schedule(billing_schedule)
+
+        if not valid_billing_schedule:
+            print(error)
+            return
+
+        old_invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
+                                    .filter(Invoice.deleted == False)\
+                                    .all()
+
+        for invoice in old_invoices:
+            invoice.deleted = True
+
+        self.policy.billing_schedule = billing_schedule
+        self.make_invoices()
+
+        db.session.commit()
+
+        print('Policy billing schedule changed.')
+
+    def validate_billing_schedule(self, billing_schedule=None):
+        if not billing_schedule:
+            return False, 'You need to specify a billing schedule.'
+
+        if self.policy.billing_schedule == billing_schedule:
+            return False, 'Policy already has %s billing schedule.' % billing_schedule
+
+        if billing_schedule not in ['Annual', 'Two-Pay', 'Quarterly', 'Monthly']:
+            return False, 'Invalid billing schedule. Choices are "Annual", "Two-Pay", "Quarterly" and "Monthly"'
+
+        return True, ''
 
     def make_payment(self, contact_id=None, date_cursor=None, amount=0):
         """
@@ -84,7 +122,7 @@ class PolicyAccounting(object):
         if self.return_account_balance(date_cursor) > 0:
             try:
                 Invoice.query.filter_by(policy_id=self.policy.id) \
-                    .filter(Invoice.due_date < date_cursor, date_cursor < Invoice.cancel_date) \
+                    .filter(Invoice.due_date < date_cursor, date_cursor < Invoice.cancel_date, Invoice.deleted == False) \
                     .one()
                 return True
             except:
@@ -100,7 +138,7 @@ class PolicyAccounting(object):
             date_cursor = datetime.now().date()
 
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
-                                .filter(Invoice.cancel_date <= date_cursor)\
+                                .filter(Invoice.cancel_date <= date_cursor, Invoice.deleted == False)\
                                 .order_by(Invoice.bill_date)\
                                 .all()
 
@@ -118,8 +156,6 @@ class PolicyAccounting(object):
         """
         Creates invoices depending on policy's billing_schedule.
         """
-        for invoice in self.policy.invoices:
-            invoice.delete()
 
         billing_schedules = {'Annual': 1, 'Two-Pay': 2, 'Quarterly': 4, 'Monthly': 12}
 
