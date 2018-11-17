@@ -23,6 +23,10 @@ class PolicyAccounting(object):
             self.make_invoices()
 
     def return_account_balance(self, date_cursor=None):
+        """
+        :param date_cursor: Date at which the account balance is to be calculated.
+        :return: Account balance / How much is left to pay.
+        """
         if not date_cursor:
             date_cursor = datetime.now().date()
 
@@ -43,6 +47,12 @@ class PolicyAccounting(object):
         return due_now
 
     def make_payment(self, contact_id=None, date_cursor=None, amount=0):
+        """
+        :param contact_id: Foreign Key to Contact instance, defaults to policy's named_insured.
+        :param date_cursor: Payment date, defaults to today's date.
+        :param amount: Payment amount.
+        :return: Payment instance.
+        """
         if not date_cursor:
             date_cursor = datetime.now().date()
 
@@ -71,6 +81,10 @@ class PolicyAccounting(object):
         pass
 
     def evaluate_cancel(self, date_cursor=None):
+        """
+        :param date_cursor: Date at which cancellation wants to be evaluated.
+        Prints if the policie should've been canceled or not.
+        """
         if not date_cursor:
             date_cursor = datetime.now().date()
 
@@ -90,6 +104,9 @@ class PolicyAccounting(object):
 
 
     def make_invoices(self):
+        """
+        Creates invoices depending on policy's billing_schedule.
+        """
         for invoice in self.policy.invoices:
             invoice.delete()
 
