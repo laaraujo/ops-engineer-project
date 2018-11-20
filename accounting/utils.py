@@ -129,13 +129,59 @@ class PolicyAccounting(object):
                 return False
         return False
 
-    def evaluate_cancel(self, date_cursor=None):
+    def change_policy_status(self, date_cursor=None, new_status=None, description=None):
         """
-        :param date_cursor: Date at which cancellation wants to be evaluated.
-        Prints if the policie should've been canceled or not.
+        :param date_cursor: Date at which status update is to be done.
+        :param new_status: New status for the policy.
+        :param description: Status change description
+        :return: True if policy's changed, False and error message otherwise.
         """
+        valid_policy_status, error = self.validate_status(new_status)
+
+        if not valid_policy_status:
+            return False, error
+
         if not date_cursor:
             date_cursor = datetime.now().date()
+        elif date_cursor > datetime.now().date():
+            return False, "You cannot change a policy's status in the future!"
+
+        self.policy.status = new_status
+        self.policy.status_change_date = date_cursor
+        self.policy.status_change_description = description
+
+        db.session.commit()
+
+        return True, ''
+
+    def validate_status(self, status=None):
+        """
+        :param status: Status that wants to be validated (string).
+        :return: True if status is valid and False and error message otherwise.
+        """
+        if not status:
+            return False, 'You need to specify a status"'
+
+        if status not in ['Active', 'Canceled', 'Expired']:
+            return False, 'Invalid status. Choices are "Canceled", "Active" and "Expired"'
+
+        if status == self.policy.status:
+            return False, 'Policy already has %s status.' % status
+
+        return True, ''
+
+    def cancel_policy(self, date_cursor=None, description=None):
+        """
+        Cancels policy if it it meets cancelation requirements.
+        :param date_cursor: Date at which policy wants to be canceled, will default to now.
+        :param description: Cancelation description.
+        """
+
+        if not date_cursor:
+            date_cursor = datetime.now().date()
+        elif date_cursor > datetime.now().date():
+            print('You cannot cancel a policy in the future!')
+            return
 
         invoices = Invoice.query.filter_by(policy_id=self.policy.id)\
                                 .filter(Invoice.cancel_date <= date_cursor, Invoice.deleted == False)\
@@ -143,13 +189,15 @@ class PolicyAccounting(object):
                                 .all()
 
         for invoice in invoices:
-            if not self.return_account_balance(invoice.cancel_date):
-                continue
-            else:
-                print "THIS POLICY SHOULD HAVE CANCELED"
-                break
-        else:
-            print "THIS POLICY SHOULD NOT CANCEL"
+            if self.return_account_balance(invoice.cancel_date):
+                status_changed, error = self.change_policy_status(date_cursor, 'Canceled', description)
+                if not status_changed:
+                    print(error)
+                else:
+                    print('Policy canceled successfully.')
+                return
+        print('Policy should not be canceled')
+        return
 
 
     def make_invoices(self):
