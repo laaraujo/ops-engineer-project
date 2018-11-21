@@ -142,6 +142,8 @@ The Problems
 
 **BONUS**: If there's anything else bothering you about the code, go ahead and feel free to
 change it. Make each additional update in its own commit and be sure to put "Bonus" in the commit message please. :)
+
+During problem #10 a list view of policies was added for the web interface.
  
  
 Finished?
