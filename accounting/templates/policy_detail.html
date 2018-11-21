@@ -1,0 +1,80 @@
+<div data-bind="if: policy" class="row">
+	<div data-bind="with: policy" class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+		<div class="table-responsive">
+			<table class="table table-primary policy-table">
+				<thead class="bg-dark">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Name</th>
+						<th scope="col">Effective date</th>
+						<th scope="col">Status</th>
+						<th scope="col">Billing schedule</th>
+						<th scope="col">Annual premium</th>
+						<th scope="col">Account balance</th>
+						<th scope="col">Named insured</th>
+						<th scope="col">Agent</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td data-bind="text: id" scope="row"></td>
+						<td data-bind="text: name"></td>
+						<td data-bind="text: effectiveDate"></td>
+						<td data-bind="text: status"></td>
+						<td data-bind="text: billingSchedule"></td>
+						<td data-bind="text: annualPremium"></td>
+						<td data-bind="text: accountBalance"></td>
+						<td data-bind="text: namedInsured"></td>
+						<td data-bind="text: agent"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+		<div class="col-xs-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+		<h3>Invoices</h3>
+		<div class="table-responsive">
+			<table class="table table-warning">
+				<thead class="bg-dark">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Bill date</th>
+						<th scope="col">Due date</th>
+						<th scope="col">Cancel date</th>
+						<th scope="col">Amount due</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: invoices">
+					<tr>
+						<th data-bind="text: id" scope="row"></th>
+						<td data-bind="text: billDate"></td>
+						<td data-bind="text: dueDate"></td>
+						<td data-bind="text: cancelDate"></td>
+						<td data-bind="text: amountDue"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4">
+		<h3>Payments</h3>
+		<div class="table-responsive">
+			<table class="table table-success">
+				<thead class="bg-dark">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Amount paid</th>
+						<th scope="col">Transaction date</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: payments">
+					<tr>
+						<th data-bind="text: id" scope="row"></th>
+						<td data-bind="text: amountPaid"></td>
+						<td data-bind="text: transactionDate"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,36 @@
+<div data-bind="ifnot: policy" class="row">
+	<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+		<div class="table-responsive">
+			<table class="table table-hover table-primary policy-table">
+				<thead class="bg-dark">
+					<tr>
+						<th scope="col">#</th>
+						<th scope="col">Name</th>
+						<th scope="col">Effective date</th>
+						<th scope="col">Status</th>
+						<th scope="col">Billing schedule</th>
+						<th scope="col">Annual premium</th>
+						<th scope="col">Named insured</th>
+						<th scope="col">Agent</th>
+						<th scope="col">Status change description</th>
+						<th scope="col">Status change date</th>
+					</tr>
+				</thead>
+				<tbody data-bind="foreach: policyList">
+					<tr>
+						<td data-bind="text: id" scope="row"></td>
+						<td data-bind="text: name"></td>
+						<td data-bind="text: effectiveDate"></td>
+						<td data-bind="text: status"></td>
+						<td data-bind="text: billingSchedule"></td>
+						<td data-bind="text: annualPremium"></td>
+						<td data-bind="text: namedInsured"></td>
+						<td data-bind="text: agent"></td>
+						<td data-bind="text: statusChangeDescription"></td>
+						<td data-bind="text: statusChange_date"></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>

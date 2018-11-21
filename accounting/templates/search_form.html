@@ -1,0 +1,13 @@
+<form data-bind="submit: showPolicyDetail" class="form-inline">
+
+	<input data-bind="textInput: policyId" type="search" class="form-control" placeholder="Policy ID" aria-label="Policy ID">
+	<input data-bind="value: dateCursor" class="form-control" id="datePicker" type="date">
+
+	<button type="submit" class="btn btn-dark">Search</button>
+	<button data-bind="click: showPolicyList" type="button" class="btn btn-dark">Reset</button>
+
+	<div id="error-message" data-bind="if: errorMessage">
+		<span data-bind="text: errorMessage"></span>
+	</div>
+	
+</form>

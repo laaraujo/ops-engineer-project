@@ -1,0 +1,27 @@
+body {
+    background-color: #f7f7f9;
+}
+
+th, td {
+    white-space:nowrap;
+}
+
+button, input, #error-message {
+    margin-left: 5px;
+    margin-left: 5px;
+    margin-top: 10px;
+    margin-bottom: 3px;
+}
+
+thead {
+    color: white;
+}
+
+#error-message {
+    color: red;
+    margin-left: 10px;
+}
+
+.policy-table {
+     margin-top: 10px;
+}
