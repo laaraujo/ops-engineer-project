@@ -137,6 +137,8 @@ The Problems
      The interface should be hooked up with Knockout.js and be representative of good MVVM design.
 
  11. Prevent any input errors with both Knockout validation & backend enforcement.
+    
+    Done in previous commit.
 
 **BONUS**: If there's anything else bothering you about the code, go ahead and feel free to
 change it. Make each additional update in its own commit and be sure to put "Bonus" in the commit message please. :)
