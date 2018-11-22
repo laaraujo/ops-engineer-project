@@ -17,7 +17,7 @@
 					</tr>
 				</thead>
 				<tbody data-bind="foreach: policyList">
-					<tr>
+					<tr data-bind="click: $parent.clickPolicy" class="policy-list-item">
 						<td data-bind="text: id" scope="row"></td>
 						<td data-bind="text: name"></td>
 						<td data-bind="text: effectiveDate"></td>

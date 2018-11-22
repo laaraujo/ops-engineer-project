@@ -71,6 +71,11 @@ function PolicyViewModel() {
         });
     }
 
+    self.clickPolicy = function(policy) {
+        self.policyId(policy.id());
+        self.showPolicyDetail();
+    }
+
     self.showPolicyList();
     
 }

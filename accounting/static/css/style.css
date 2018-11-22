@@ -25,3 +25,7 @@ thead {
 .policy-table {
      margin-top: 10px;
 }
+
+.policy-list-item:hover {
+    cursor: pointer;
+}
