@@ -19,21 +19,21 @@ from utils import PolicyAccounting
 @app.route("/")
 def index():
     # You will need to serve something up here.
-    return render_template('index.html')
+    return render_template("index.html")
 
 
-@app.route("/policies", methods=['GET'])
+@app.route("/policies", methods=["GET"])
 def get_policies():
     policies = Policy.query.all()
     policies_dictionary = []
     for policy in policies:
         policies_dictionary.append(policy_serializer(policy))
-    return jsonify({'policies': policies_dictionary})
+    return jsonify({"policies": policies_dictionary})
 
 
-@app.route("/policies/<int:policy_id>", methods=['POST'])
+@app.route("/policies/<int:policy_id>", methods=["POST"])
 def get_policy(policy_id):
-    date_cursor = datetime.strptime(request.values.get('dateCursor'), '%Y-%m-%d')
+    date_cursor = datetime.strptime(request.values.get("dateCursor"), "%Y-%m-%d")
     policy_object = Policy.query.filter_by(id=policy_id).one()
 
     pa = PolicyAccounting(policy_object.id)
@@ -49,4 +49,4 @@ def get_policy(policy_id):
     for invoice in invoices_queryset:
         invoices.append(invoice_serializer(invoice))
 
-    return jsonify({'policy': policy, 'payments': payments, 'invoices': invoices})
+    return jsonify({"policy": policy, "payments": payments, "invoices": invoices})
